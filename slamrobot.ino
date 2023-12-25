@@ -131,9 +131,6 @@ void loop()
       left_setpoint = demand_speed_left * 39.65;
       right_setpoint = demand_speed_right * 39.65;
 
-      left_input = left_ticks_diff;
-      right_input = right_ticks_diff;
-
       leftPID.Compute();
       rightPID.Compute();
     }
