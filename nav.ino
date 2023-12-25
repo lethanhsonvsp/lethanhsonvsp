@@ -59,18 +59,21 @@ double speed_act_left = 0;                    //Actual speed for left wheel in m
 double speed_act_right = 0;                    //Command speed for left wheel in m/s 
 
 void setup() {
+  nh.getHardware()->setBaud(115200);
   nh.initNode();
   nh.subscribe(sub);
-  nh.advertise(speed_pub);                  //prepare to publish speed in ROS topic
-//  Serial.begin(115200);
-  
+  nh.advertise(speed_pub); 
   rightPID.SetMode(AUTOMATIC);
   rightPID.SetSampleTime(1);
-  rightPID.SetOutputLimits(-100, 100);
+  rightPID.SetOutputLimits(-a, a);
 
   leftPID.SetMode(AUTOMATIC);
   leftPID.SetSampleTime(1);
-  leftPID.SetOutputLimits(-100, 100);
+  leftPID.SetOutputLimits(-a, a);
+  pinMode(ledr, OUTPUT);
+  pinMode(ledg, OUTPUT);
+  digitalWrite(ledg, LOW);
+  digitalWrite(ledr, LOW);
 }
 
 void loop() {
