@@ -107,8 +107,6 @@ void loop()
     // Đọc giá trị từ cảm biến siêu âm
     int leftDistance = leftSensor.getDistance();
     int rightDistance = rightSensor.getDistance();
-    int temp_left_pwm = left_output;
-    int temp_right_pwm = right_output;
     // Kiểm tra và điều khiển bánh dựa trên khoảng cách
     if (leftDistance < 12)
     {
@@ -124,21 +122,24 @@ void loop()
     }
     else
     {
-      // Cảm biến không gặp vật, sử dụng PID như trước đó
-      demand_speed_left = demandx - (demandz * 0.1075);
-      demand_speed_right = demandx + (demandz * 0.1075);
+      int k = 0.1075;
+      int l = 39.65;
+      demand_speed_left = demandx - (demandz * k);
+      demand_speed_right = demandx + (demandz * k);
 
-      left_setpoint = demand_speed_left * 39.65;
-      right_setpoint = demand_speed_right * 39.65;
-
+      left_setpoint = demand_speed_left * l;
+      right_setpoint = demand_speed_right * l;
+      
+      // Đưa giá trị PWM vào motor
       leftPID.Compute();
       rightPID.Compute();
+      left.rotate(left_output);
+      right.rotate(right_output);
     }
 
-    // Đưa giá trị PWM vào motor
-    left.rotate(left_pwm_value);
-    right.rotate(right_pwm_value);
-    digitalWrite(ledg, LOW);
+
+
+    //digitalWrite(ledg, LOW);
     // LED Control
     if (left_pwm_value == 0 && right_pwm_value == 0)
     {
@@ -164,7 +165,7 @@ void loop()
     // Gán giá trị PWM cho ROS
     left_pwm_value = map(left_output, -a, a, -255, 255);
     right_pwm_value = map(right_output, -a, a, -255, 255);
-    int m = 100;
+    /*int m = 100;
     int h = 80;
     if (left_pwm_value >= 140) {
       left_pwm_value = m;
@@ -181,7 +182,7 @@ void loop()
     if (right_pwm_value <= -140) {
       right_pwm_value = -m;
       left_pwm_value = -h;
-    }
+    }*/
     // Xuất thông điệp
     publishTicksAndPWM(LOOPTIME);
     nh.spinOnce();
